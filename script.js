@@ -217,6 +217,16 @@ function render() {
         }
     }
 
+    for (let x = 0; x < grid_amount; x++) {
+        for (let y = 0; y < grid_amount; y++) {
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)"
+            ctx.beginPath();
+            ctx.rect(x * cm, y * cm+5, cm, cm);
+            ctx.stroke();
+        }
+    }
+
 
 
     points.forEach(function (shape, j) {
@@ -280,35 +290,41 @@ function render() {
             let bbb = distanceFA(aa[0], bb[0])+1
             let ccc = distanceFA(cc[0], bb[0])+1
             let cca = distanceFA(cc[1], bb[1])+1
+            
+            let D = distanceF(aa, bb)
+            let E = distanceF(bb, cc)
+            let F = distanceF(cc, aa)
+            let s = (D+E+F)/2
 
-            let A = 0
-            let B = 0
-            let C = "d"
+            // let A = 0
+            // let B = 0
+            // let C = "d"
 
-            if (Math.max(a, b, c) == c) {
-                A = b
-                B = a
-                C = "c"
-            }
-            if (Math.max(a, b, c) == a) {
-                A = c
-                B = b
-                C = "a"
-            }
-            if (Math.max(a, b, c) == b) {
-                A = a
-                B = c
-                C = "b"
-            }
+            // if (Math.max(a, b, c) == c) {
+            //     A = b
+            //     B = a
+            //     C = "c"
+            // }
+            // if (Math.max(a, b, c) == a) {
+            //     A = c
+            //     B = b
+            //     C = "a"
+            // }
+            // if (Math.max(a, b, c) == b) {
+            //     A = a
+            //     B = c
+            //     C = "b"
+            // }
 
             console.log("start")
-            console.log(a)
-            console.log(b)
-            console.log(c)
-            console.log(C)
+            console.log(distanceF(aa, bb))
+            console.log(distanceF(bb, cc))
+            console.log(distanceF(cc, aa))
+            console.log(aa)
+            console.log(bb)
             console.log("end")
             shapeType = 4
-            area = (A*B)/2 + " cm²";
+            area = (Math.sqrt(s*(s-D)*(s-E)*(s-F))).toFixed(1) + " cm²";
             areaFormula = "(l x w) / 2"
         }
 
@@ -364,11 +380,11 @@ function render() {
             area = 0;
 
             if (shapeType == 0 || shapeType == 1) {
-                area = (BC + 1) * (AB + 1) + " cm²"
+                area = BC * AB + " cm²"
             }
             if (shapeType == 2) {
-                let b = (AB + 1)
-                let h = distanceA(B[1], C[1]) + 1 // only the y
+                let b = AB
+                let h = distanceA(B[1], C[1]) // only the y
                 area = b * h + " cm²"
             }
             if (shapeType == 3) {
@@ -394,7 +410,7 @@ function render() {
                 console.log(b1)
                 console.log(b2)
                 console.log(h + 1)
-                area = (1 / 2) * ((b1 + 1) + (b2 + 1)) * (h + 1) + " cm²"
+                area = (1 / 2) * (b1 + b2) * h + " cm²"
             }
         }
 
@@ -408,12 +424,13 @@ function render() {
     // ctx.fillText(shapeType == 0 && "Square" || shapeType == 1 && "Rectangle" || shapeType == 2 && "Parallelogram" || shapeType == 3 && "Trapezoid" || "Irregular", 700, 500)
 
     ctx.fillStyle = "rgba(10, 10, 10, .5)"
-    ctx.fillRect(12, 587, 270, 85)
+    ctx.fillRect(12, 587, 270+50, 85+25)
     ctx.font = "20px Arial"
     ctx.fillStyle = "rgba(90, 90, 90, 1)"
     ctx.fillText("Left Click: Add new shape", 20, 610)
     ctx.fillText("Right Click: Move point", 20, 635)
     ctx.fillText("Middle Click: Remove shape", 20, 660)
+    ctx.fillText("Ctrl + Middle Click: Remove vertex", 20, 685)
 
 
     requestAnimationFrame(render);
